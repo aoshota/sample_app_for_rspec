@@ -14,6 +14,8 @@ gem 'sorcery'
 
 group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
+  gem 'rspec-rails', '~> 3.9.0'
+  gem 'factory_bot_rails', '~> 6.1.0'
 end
 
 group :development do
