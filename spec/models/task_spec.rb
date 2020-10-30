@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe Task, type: :model do
 
-  let(:user) { FactoryBot.create(:user) }
-  let(:task) { FactoryBot.create(:task) }
+  let(:user) { create(:user) }
+  let(:task) { create(:task) }
 
   describe 'バリデーションは' do
     it '全ての属性が有効であること' do
@@ -24,15 +24,15 @@ RSpec.describe Task, type: :model do
     end
 
     it '重複したタイトルならば無効であること' do
-      task = FactoryBot.create(:task, user: user, title: "Same Title")
-      other_task = FactoryBot.build(:task, user: user, title: "Same Title")
+      task = create(:task, user: user, title: "Same Title")
+      other_task = build(:task, user: user, title: "Same Title")
       expect(other_task).to_not be_valid
       expect(other_task.errors[:title]).to eq ["has already been taken"]
     end
 
     it '別のタイトルならば有効であること' do
-      task = FactoryBot.create(:task, user: user, title: "Same Title")
-      other_task = FactoryBot.build(:task, user: user, title: "Another Title")
+      task = create(:task, user: user, title: "Same Title")
+      other_task = build(:task, user: user, title: "Another Title")
       expect(other_task).to be_valid
       expect(other_task.errors).to be_empty
     end
