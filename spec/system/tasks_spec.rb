@@ -6,7 +6,9 @@ RSpec.describe "Users", type: :system do
   let(:task) { create(:task) }
 
   describe 'ログイン前' do
+
     describe 'ユーザー新規登録' do
+
       context 'フォームの入力値が正常' do
         it 'ユーザーの新規作成が成功する' do
           visit sign_up_path
@@ -18,11 +20,22 @@ RSpec.describe "Users", type: :system do
           expect(page).to have_content('User was successfully created.')
         end
       end
+
       context 'メールアドレスが未入力' do
-        it 'ユーザーの新規作成が失敗する'
+        it 'ユーザーの新規作成が失敗する' do
+          visit sign_up_path
+          fill_in 'user_password', with: 'password'
+          fill_in 'user_password_confirmation', with: 'password'
+          click_button 'SignUp'
+          expect(current_path).to eq '/users'
+          expect(page).to have_content("Email can't be blank")
+        end
       end
+
       context '登録済のメールアドレスを使用' do
-        it 'ユーザーの新規作成が失敗する'
+        it 'ユーザーの新規作成が失敗する' do
+
+        end
       end
     end
 
