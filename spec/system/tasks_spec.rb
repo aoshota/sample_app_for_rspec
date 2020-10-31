@@ -71,7 +71,16 @@ RSpec.describe "Tasks", type: :system do
       end
 
       context '他ユーザーのタスク編集ページにアクセス' do
-        it '編集ページへのアクセスが失敗する'
+        it '編集ページへのアクセスが失敗する' do
+          task1 = create(:task)
+          task2 = create(:task)
+
+          sign_in_as task1.user
+          visit edit_task_path(task2)
+
+          expect(current_path).to eq root_path
+          expect(page).to have_content('Forbidden access.')
+        end
       end
     end
 
