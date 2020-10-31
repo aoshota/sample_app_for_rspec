@@ -118,7 +118,29 @@ RSpec.describe "Users", type: :system do
 
     describe 'マイページ' do
       context 'タスクを作成' do
-        it '新規作成したタスクが表示される'
+        it '新規作成したタスクが表示される' do
+          sign_in_as user
+
+          task = build(:task,
+            title: 'Sample title',
+            content: 'Sample content',
+            status: :doing,
+            deadline: 1.week.from_now)
+
+          click_link 'New Task'
+          fill_in 'task_title', with: task.title
+          fill_in 'task_content', with: task.content
+          select 'doing', from: 'Status'
+          fill_in 'task_deadline', with: task.deadline
+          click_button 'Create Task'
+
+          expect(current_path).to eq '/tasks/1'
+          expect(page).to have_content('Task was successfully created.')
+          expect(page).to have_content(task.title)
+          expect(page).to have_content(task.content)
+          expect(page).to have_content(task.status)
+          expect(page).to have_content(task.deadline.strftime("%Y/%-m/%-d %-H:%-M"))
+        end
       end
     end
   end
