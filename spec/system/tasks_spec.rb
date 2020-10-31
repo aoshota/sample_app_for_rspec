@@ -70,8 +70,6 @@ RSpec.describe "Users", type: :system do
           click_link 'Mypage'
           click_link 'Edit'
           fill_in 'user_email', with: 'change@example.com'
-          fill_in 'user_password', with: 'password'
-          fill_in 'user_password_confirmation', with: 'password'
           click_button 'Update'
 
           expect(current_path).to eq "/users/#{user.id}"
@@ -84,8 +82,6 @@ RSpec.describe "Users", type: :system do
           click_link 'Mypage'
           click_link 'Edit'
           fill_in 'user_email', with: nil
-          fill_in 'user_password', with: 'password'
-          fill_in 'user_password_confirmation', with: 'password'
           click_button 'Update'
 
           expect(current_path).to eq "/users/#{user.id}"
@@ -93,7 +89,17 @@ RSpec.describe "Users", type: :system do
         end
       end
       context '登録済のメールアドレスを使用' do
-        it 'ユーザーの編集が失敗する'
+        it 'ユーザーの編集が失敗する' do
+          create(:user, email: 'test@example.com')
+          sign_in_as user
+          click_link 'Mypage'
+          click_link 'Edit'
+          fill_in 'user_email', with: 'test@example.com'
+          click_button 'Update'
+
+          expect(current_path).to eq "/users/#{user.id}"
+          expect(page).to have_content('Email has already been taken')
+        end
       end
       context '他ユーザーの編集ページにアクセス' do
         it '編集ページへのアクセスが失敗する'
