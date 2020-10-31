@@ -8,7 +8,6 @@ RSpec.describe "Users", type: :system do
   describe 'ログイン前' do
 
     describe 'ユーザー新規登録' do
-
       context 'フォームの入力値が正常' do
         it 'ユーザーの新規作成が成功する' do
           visit sign_up_path
@@ -34,14 +33,32 @@ RSpec.describe "Users", type: :system do
 
       context '登録済のメールアドレスを使用' do
         it 'ユーザーの新規作成が失敗する' do
+          visit sign_up_path
+          fill_in 'user_email', with: 'test@example.com'
+          fill_in 'user_password', with: 'password'
+          fill_in 'user_password_confirmation', with: 'password'
+          click_button 'SignUp'
 
+          # 同じメールアドレスでユーザーの新規作成
+          visit sign_up_path
+          fill_in 'user_email', with: 'test@example.com'
+          fill_in 'user_password', with: 'password'
+          fill_in 'user_password_confirmation', with: 'password'
+          click_button 'SignUp'
+
+          expect(current_path).to eq '/users'
+          expect(page).to have_content('Email has already been taken')
         end
       end
     end
 
     describe 'マイページ' do
       context 'ログインしていない状態' do
-        it 'マイページへのアクセスが失敗する'
+        it 'マイページへのアクセスが失敗する' do
+          visit '/users/1'
+          expect(current_path).to eq login_path
+          expect(page).to have_content('Login required')
+        end
       end
     end
   end
