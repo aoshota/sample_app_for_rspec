@@ -55,6 +55,35 @@ RSpec.describe "Tasks", type: :system do
         end
       end
     end
+
+    describe 'タスク編集' do
+      context 'フォームの入力が正常' do
+        it 'タスクの編集が成功する' do
+          sign_in_as task.user
+
+          visit edit_task_path(task)
+          fill_in 'task_title', with: 'change'
+          click_button 'Update Task'
+
+          expect(current_path).to eq task_path(task)
+          expect(page).to have_content('Task was successfully updated.')
+        end
+      end
+
+      context '他ユーザーのタスク編集ページにアクセス' do
+        it '編集ページへのアクセスが失敗する'
+      end
+    end
+
+    describe 'タスク削除' do
+      it 'タスクの削除が成功する' do
+        sign_in_as task.user
+
+        click_link 'Destroy'
+        page.accept_confirm
+        expect(page).to have_content('Task was successfully destroyed.')
+      end
+    end
   end
 
 end
