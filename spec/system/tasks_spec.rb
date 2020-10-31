@@ -8,7 +8,15 @@ RSpec.describe "Users", type: :system do
   describe 'ログイン前' do
     describe 'ユーザー新規登録' do
       context 'フォームの入力値が正常' do
-        it 'ユーザーの新規作成が成功する'
+        it 'ユーザーの新規作成が成功する' do
+          visit sign_up_path
+          fill_in 'user_email', with: 'test@example.com'
+          fill_in 'user_password', with: 'password'
+          fill_in 'user_password_confirmation', with: 'password'
+          click_button 'SignUp'
+          expect(current_path).to eq login_path
+          expect(page).to have_content('User was successfully created.')
+        end
       end
       context 'メールアドレスが未入力' do
         it 'ユーザーの新規作成が失敗する'
@@ -52,7 +60,6 @@ end
 RSpec.describe "UserSessions", type: :system do
 
   let(:user) { create(:user) }
-  let(:task) { create(:task) }
 
   describe 'ログイン前' do
     context 'フォームの入力値が正常' do
