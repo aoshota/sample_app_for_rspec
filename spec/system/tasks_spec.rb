@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe "Users", type: :system do
+
+  let(:user) { create(:user) }
+  let(:task) { create(:task) }
+
   describe 'ログイン前' do
     describe 'ユーザー新規登録' do
       context 'フォームの入力値が正常' do
@@ -46,6 +50,10 @@ RSpec.describe "Users", type: :system do
 end
 
 RSpec.describe "UserSessions", type: :system do
+
+  let(:user) { create(:user) }
+  let(:task) { create(:task) }
+
   describe 'ログイン前' do
     context 'フォームの入力値が正常' do
       it 'ログイン処理が成功する'
@@ -57,7 +65,12 @@ RSpec.describe "UserSessions", type: :system do
 
   describe 'ログイン後' do
     context 'ログアウトボタンをクリック' do
-      it 'ログアウト処理が成功する'
+      it 'ログアウト処理が成功する' do
+        sign_in_as user
+        click_link 'Logout'
+        expect(current_path).to eq root_path
+        expect(page).to have_content('Logged out')
+      end
     end
   end
 end
