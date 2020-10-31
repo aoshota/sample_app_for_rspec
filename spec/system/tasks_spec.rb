@@ -3,7 +3,6 @@ require 'rails_helper'
 RSpec.describe "Users", type: :system do
 
   let(:user) { create(:user) }
-  let(:task) { create(:task) }
 
   describe 'ログイン前' do
 
@@ -66,10 +65,32 @@ RSpec.describe "Users", type: :system do
   describe 'ログイン後' do
     describe 'ユーザー編集' do
       context 'フォームの入力値が正常' do
-        it 'ユーザーの編集が成功する'
+        it 'ユーザーの編集が成功する' do
+          sign_in_as user
+          click_link 'Mypage'
+          click_link 'Edit'
+          fill_in 'user_email', with: 'change@example.com'
+          fill_in 'user_password', with: 'password'
+          fill_in 'user_password_confirmation', with: 'password'
+          click_button 'Update'
+
+          expect(current_path).to eq "/users/#{user.id}"
+          expect(page).to have_content('User was successfully updated.')
+        end
       end
       context 'メールアドレスが未入力' do
-        it 'ユーザーの編集が失敗する'
+        it 'ユーザーの編集が失敗する' do
+          sign_in_as user
+          click_link 'Mypage'
+          click_link 'Edit'
+          fill_in 'user_email', with: nil
+          fill_in 'user_password', with: 'password'
+          fill_in 'user_password_confirmation', with: 'password'
+          click_button 'Update'
+
+          expect(current_path).to eq "/users/#{user.id}"
+          expect(page).to have_content("Email can't be blank")
+        end
       end
       context '登録済のメールアドレスを使用' do
         it 'ユーザーの編集が失敗する'
