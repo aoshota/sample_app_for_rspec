@@ -72,7 +72,7 @@ RSpec.describe "Users", type: :system do
           fill_in 'user_email', with: 'change@example.com'
           click_button 'Update'
 
-          expect(current_path).to eq "/users/#{user.id}"
+          expect(current_path).to eq user_path(user)
           expect(page).to have_content('User was successfully updated.')
         end
       end
@@ -84,7 +84,7 @@ RSpec.describe "Users", type: :system do
           fill_in 'user_email', with: nil
           click_button 'Update'
 
-          expect(current_path).to eq "/users/#{user.id}"
+          expect(current_path).to eq user_path(user)
           expect(page).to have_content("Email can't be blank")
         end
       end
@@ -97,12 +97,22 @@ RSpec.describe "Users", type: :system do
           fill_in 'user_email', with: 'test@example.com'
           click_button 'Update'
 
-          expect(current_path).to eq "/users/#{user.id}"
+          expect(current_path).to eq user_path(user)
           expect(page).to have_content('Email has already been taken')
         end
       end
       context '他ユーザーの編集ページにアクセス' do
-        it '編集ページへのアクセスが失敗する'
+        it '編集ページへのアクセスが失敗する' do
+          user1 = create(:user)
+          user2 = create(:user)
+
+          sign_in_as user1
+          # ログインしていないuser2の編集ページへアクセス
+          visit "/users/#{user2.id}/edit"
+
+          expect(current_path).to eq user_path(user1)
+          expect(page).to have_content('Forbidden access.')
+        end
       end
     end
 
