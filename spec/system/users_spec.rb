@@ -3,7 +3,6 @@ require 'rails_helper'
 RSpec.describe "Users", type: :system do
 
   let(:user) { create(:user) }
-  let(:task) { create(:task) }
 
   describe 'ログイン前' do
 
@@ -135,12 +134,9 @@ RSpec.describe "Users", type: :system do
           fill_in 'task_deadline', with: task.deadline
           click_button 'Create Task'
 
-          expect(current_path).to eq '/tasks/1'
-          expect(page).to have_content('Task was successfully created.')
+          visit user_path(user)
           expect(page).to have_content(task.title)
-          expect(page).to have_content(task.content)
           expect(page).to have_content(task.status)
-          expect(page).to have_content(task.deadline.strftime("%Y/%-m/%-d %-H:%-M"))
         end
       end
     end
