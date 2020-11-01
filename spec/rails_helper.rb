@@ -65,4 +65,5 @@ RSpec.configure do |config|
 
   # クラス名（FactoryBot）を省略するための設定
   config.include FactoryBot::Syntax::Methods
+  config.include LoginSupport
 end
