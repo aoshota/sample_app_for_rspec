@@ -35,10 +35,10 @@ RSpec.describe "Tasks", type: :system, focus: true do
         it 'すべてのユーザーのタスク情報が表示される' do
           task_list = create_list(:task, 3)
           visit tasks_path
+          expect(current_path).to eq tasks_path
           expect(page).to have_content task_list[0].title
           expect(page).to have_content task_list[1].title
           expect(page).to have_content task_list[2].title
-          expect(current_path).to eq tasks_path
         end
       end
     end
@@ -57,7 +57,6 @@ RSpec.describe "Tasks", type: :system, focus: true do
           select 'doing', from: 'Status'
           fill_in 'task_deadline', with: DateTime.new(2020, 6, 1, 10, 30)
           click_button 'Create Task'
-
           expect(current_path).to eq '/tasks/1'
           expect(page).to have_content('Task was successfully created.')
           expect(page).to have_content('Title: test_title')
@@ -75,14 +74,12 @@ RSpec.describe "Tasks", type: :system, focus: true do
 
       context 'フォームの入力が正常' do
         it 'タスクの編集が成功する' do
-
           fill_in 'task_title', with: 'updated_title'
           select :done, from: 'Status'
           click_button 'Update Task'
-
+          expect(current_path).to eq task_path(task)
           expect(page).to have_content 'Title: updated_title'
           expect(page).to have_content 'Status: done'
-          expect(current_path).to eq task_path(task)
           expect(page).to have_content('Task was successfully updated.')
         end
       end
@@ -92,9 +89,9 @@ RSpec.describe "Tasks", type: :system, focus: true do
           fill_in 'Title', with: nil
           select :todo, from: 'Status'
           click_button 'Update Task'
+          expect(current_path).to eq task_path(task)
           expect(page).to have_content '1 error prohibited this task from being saved'
           expect(page).to have_content "Title can't be blank"
-          expect(current_path).to eq task_path(task)
         end
       end
 
@@ -103,9 +100,9 @@ RSpec.describe "Tasks", type: :system, focus: true do
           fill_in 'Title', with: other_task.title
           select :todo, from: 'Status'
           click_button 'Update Task'
+          expect(current_path).to eq task_path(task)
           expect(page).to have_content '1 error prohibited this task from being saved'
           expect(page).to have_content "Title has already been taken"
-          expect(current_path).to eq task_path(task)
         end
       end
 
@@ -113,9 +110,7 @@ RSpec.describe "Tasks", type: :system, focus: true do
         it '編集ページへのアクセスが失敗する' do
           other_user = create(:user)
           other_user_task = create(:task, user: other_user)
-
           visit edit_task_path(other_user_task)
-
           expect(current_path).to eq root_path
           expect(page).to have_content('Forbidden access.')
         end

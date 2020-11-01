@@ -35,14 +35,12 @@ RSpec.describe "Users", type: :system do
       context '登録済のメールアドレスを使用' do
         it 'ユーザーの新規作成が失敗する' do
           existed_user = create(:user)
-
           # 同じメールアドレスでユーザーの新規作成
           visit sign_up_path
           fill_in 'user_email', with: existed_user.email
           fill_in 'user_password', with: 'password'
           fill_in 'user_password_confirmation', with: 'password'
           click_button 'SignUp'
-
           expect(current_path).to eq users_path
           expect(page).to have_content('1 error prohibited this user from being saved:')
           expect(page).to have_content('Email has already been taken')
@@ -71,7 +69,6 @@ RSpec.describe "Users", type: :system do
           click_link 'Edit'
           fill_in 'user_email', with: 'change@example.com'
           click_button 'Update'
-
           expect(current_path).to eq user_path(user)
           expect(page).to have_content('User was successfully updated.')
         end
@@ -83,7 +80,6 @@ RSpec.describe "Users", type: :system do
           click_link 'Edit'
           fill_in 'user_email', with: nil
           click_button 'Update'
-
           expect(current_path).to eq user_path(user)
           expect(page).to have_content("Email can't be blank")
         end
@@ -96,7 +92,6 @@ RSpec.describe "Users", type: :system do
           click_link 'Edit'
           fill_in 'user_email', with: 'test@example.com'
           click_button 'Update'
-
           expect(current_path).to eq user_path(user)
           expect(page).to have_content('Email has already been taken')
         end
@@ -105,11 +100,9 @@ RSpec.describe "Users", type: :system do
         it '編集ページへのアクセスが失敗する' do
           user1 = create(:user)
           user2 = create(:user)
-
           sign_in_as user1
           # ログインしていないuser2の編集ページへアクセス
           visit "/users/#{user2.id}/edit"
-
           expect(current_path).to eq user_path(user1)
           expect(page).to have_content('Forbidden access.')
         end
@@ -119,10 +112,8 @@ RSpec.describe "Users", type: :system do
     describe 'マイページ' do
       context 'タスクを作成' do
         it '新規作成したタスクが表示される' do
-
           sign_in_as task.user
           visit user_path(task.user)
-
           expect(page).to have_content('You have 1 task.')
           expect(page).to have_content(task.title)
           expect(page).to have_content(task.status)
