@@ -90,6 +90,7 @@ RSpec.describe "Tasks", type: :system do
 
         click_link 'Destroy'
         page.accept_confirm
+        expect(current_path).to eq tasks_path
         expect(page).to have_content('Task was successfully destroyed.')
       end
     end
