@@ -6,22 +6,28 @@ RSpec.describe "Tasks", type: :system do
   let(:task) { create(:task) }
 
   describe 'ログイン前' do
-    describe 'タスク新規作成' do
-      context 'ログインしていない状態' do
+    describe 'ページ遷移確認' do
+      context 'タスクの新規登録ページにアクセス' do
         it '新規作成ページへのアクセスが失敗する' do
           visit new_task_path
           expect(current_path).to eq login_path
           expect(page).to have_content('Login required')
         end
       end
-    end
 
-    describe 'タスク編集' do
-      context 'ログインしていない状態' do
+      context 'タスクの編集ページにアクセス' do
         it '編集ページへのアクセスが失敗する' do
           visit edit_task_path(task)
           expect(current_path).to eq login_path
           expect(page).to have_content('Login required')
+        end
+      end
+
+      context 'タスクの詳細ページにアクセス' do
+        it 'タスクの詳細情報が表示される' do
+          visit task_path(task)
+          expect(current_path).to eq task_path(task)
+          expect(page).to have_content(task.title)
         end
       end
     end
