@@ -123,8 +123,12 @@ RSpec.describe "Users", type: :system do
           sign_in_as task.user
           visit user_path(task.user)
 
+          expect(page).to have_content('You have 1 task.')
           expect(page).to have_content(task.title)
           expect(page).to have_content(task.status)
+          expect(page).to have_link('Show')
+          expect(page).to have_link('Edit')
+          expect(page).to have_link('Destroy')
         end
       end
     end
