@@ -26,28 +26,27 @@ RSpec.describe "Users", type: :system do
           fill_in 'user_password', with: 'password'
           fill_in 'user_password_confirmation', with: 'password'
           click_button 'SignUp'
-          expect(current_path).to eq '/users'
+          expect(current_path).to eq users_path
+          expect(page).to have_content('1 error prohibited this user from being saved:')
           expect(page).to have_content("Email can't be blank")
         end
       end
 
       context '登録済のメールアドレスを使用' do
         it 'ユーザーの新規作成が失敗する' do
-          visit sign_up_path
-          fill_in 'user_email', with: 'test@example.com'
-          fill_in 'user_password', with: 'password'
-          fill_in 'user_password_confirmation', with: 'password'
-          click_button 'SignUp'
+          existed_user = create(:user)
 
           # 同じメールアドレスでユーザーの新規作成
           visit sign_up_path
-          fill_in 'user_email', with: 'test@example.com'
+          fill_in 'user_email', with: existed_user.email
           fill_in 'user_password', with: 'password'
           fill_in 'user_password_confirmation', with: 'password'
           click_button 'SignUp'
 
-          expect(current_path).to eq '/users'
+          expect(current_path).to eq users_path
+          expect(page).to have_content('1 error prohibited this user from being saved:')
           expect(page).to have_content('Email has already been taken')
+          expect(page).to have_field 'user_email', with: existed_user.email
         end
       end
     end
@@ -123,7 +122,7 @@ RSpec.describe "Users", type: :system do
 
           sign_in_as task.user
           visit user_path(task.user)
-          
+
           expect(page).to have_content(task.title)
           expect(page).to have_content(task.status)
         end
