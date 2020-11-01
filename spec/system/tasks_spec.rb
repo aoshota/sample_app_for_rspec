@@ -68,30 +68,59 @@ RSpec.describe "Tasks", type: :system, focus: true do
       end
     end
 
-    # describe 'タスク編集' do
-    #   context 'フォームの入力が正常' do
-    #     it 'タスクの編集が成功する' do
+    describe 'タスク編集' do
+      let!(:task) { create(:task, user: user) }
+      let(:other_task) { create(:task, user: user) }
+      before { visit edit_task_path(task) }
 
-    #       visit edit_task_path(task)
-    #       fill_in 'task_title', with: 'change'
-    #       click_button 'Update Task'
+      context 'フォームの入力が正常' do
+        it 'タスクの編集が成功する' do
 
-    #       expect(current_path).to eq task_path(task)
-    #       expect(page).to have_content('Task was successfully updated.')
-    #     end
-    #   end
+          fill_in 'task_title', with: 'updated_title'
+          select :done, from: 'Status'
+          click_button 'Update Task'
 
-    #   context '他ユーザーのタスク編集ページにアクセス' do
-    #     it '編集ページへのアクセスが失敗する' do
-    #       task2 = create(:task)
+          expect(page).to have_content 'Title: updated_title'
+          expect(page).to have_content 'Status: done'
+          expect(current_path).to eq task_path(task)
+          expect(page).to have_content('Task was successfully updated.')
+        end
+      end
 
-    #       visit edit_task_path(task2)
+      context 'タイトルが未入力' do
+        it 'タスクの編集が失敗する' do
+          fill_in 'Title', with: nil
+          select :todo, from: 'Status'
+          click_button 'Update Task'
+          expect(page).to have_content '1 error prohibited this task from being saved'
+          expect(page).to have_content "Title can't be blank"
+          expect(current_path).to eq task_path(task)
+        end
+      end
 
-    #       expect(current_path).to eq root_path
-    #       expect(page).to have_content('Forbidden access.')
-    #     end
-    #   end
-    # end
+      context '登録済のタイトルを入力' do
+        it 'タスクの編集が失敗する' do
+          fill_in 'Title', with: other_task.title
+          select :todo, from: 'Status'
+          click_button 'Update Task'
+          expect(page).to have_content '1 error prohibited this task from being saved'
+          expect(page).to have_content "Title has already been taken"
+          expect(current_path).to eq task_path(task)
+        end
+      end
+
+      context '他ユーザーのタスク編集ページにアクセス' do
+        it '編集ページへのアクセスが失敗する' do
+          other_user = create(:user)
+          other_user_task = create(:task, user: other_user)
+
+          visit edit_task_path(other_user_task)
+
+          expect(current_path).to eq root_path
+          expect(page).to have_content('Forbidden access.')
+        end
+      end
+    end
 
     describe 'タスク削除' do
       let!(:task) { create(:task, user: user) }
