@@ -106,9 +106,10 @@ RSpec.describe "Tasks", type: :system do
         sign_in_as task.user
 
         click_link 'Destroy'
-        page.accept_confirm
+        expect(page.accept_confirm).to eq 'Are you sure?'
         expect(current_path).to eq tasks_path
         expect(page).to have_content('Task was successfully destroyed.')
+        expect(page).not_to have_content task.title
       end
     end
   end
