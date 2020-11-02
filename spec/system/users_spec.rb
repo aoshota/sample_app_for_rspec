@@ -6,7 +6,6 @@ RSpec.describe "Users", type: :system do
   let(:task) { create(:task) }
 
   describe 'ログイン前' do
-
     describe 'ユーザー新規登録' do
       context 'フォームの入力値が正常' do
         it 'ユーザーの新規作成が成功する' do
