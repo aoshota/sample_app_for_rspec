@@ -54,7 +54,7 @@ RSpec.describe "Tasks", type: :system do
           visit new_task_path
           fill_in 'task_title', with: 'test_title'
           fill_in 'task_content', with: 'test_content'
-          select 'doing', from: 'Status'
+          select :doing, from: 'Status'
           fill_in 'task_deadline', with: DateTime.new(2020, 6, 1, 10, 30)
           click_button 'Create Task'
           expect(current_path).to eq '/tasks/1'
