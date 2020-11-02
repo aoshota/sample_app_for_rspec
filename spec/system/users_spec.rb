@@ -72,6 +72,7 @@ RSpec.describe "Users", type: :system do
           expect(page).to have_content('User was successfully updated.')
         end
       end
+
       context 'メールアドレスが未入力' do
         it 'ユーザーの編集が失敗する' do
           sign_in_as user
@@ -83,6 +84,7 @@ RSpec.describe "Users", type: :system do
           expect(page).to have_content("Email can't be blank")
         end
       end
+      
       context '登録済のメールアドレスを使用' do
         it 'ユーザーの編集が失敗する' do
           create(:user, email: 'test@example.com')
@@ -95,6 +97,7 @@ RSpec.describe "Users", type: :system do
           expect(page).to have_content('Email has already been taken')
         end
       end
+
       context '他ユーザーの編集ページにアクセス' do
         it '編集ページへのアクセスが失敗する' do
           user1 = create(:user)
